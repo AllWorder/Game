@@ -22,8 +22,8 @@ class Text: public DrawableObject
         }
 };
 
-// Ya vrunishka. U menya zdes' ssilka na shrift, sam shrift ne hranitsa. I ne hvataet funczii setPosition(int x, int y).
-// No est' fabrika, v kotoroi mojno ukazat' pozotsiyu (vrode text po hodu progi ne dvigaetsa)
+// Я соврал, сам шрифт не хранится, но его достаточно один раз определить.
+// Нет сетПоситион, но есть фабрика. Учитывая статичность текста должно хватить.
 
 Circle* Balls = new Circle[partNumber];             //generating balls with random speed and position
     spawnBalls( Balls, partNumber, SCREEN_X, SCREEN_Y);
@@ -34,4 +34,4 @@ Circle* Balls = new Circle[partNumber];             //generating balls with rand
     for(int i = 0; i < partNumber; i++)
         manager.registrate(&Balls[i]);
 
-// Voobshe ya delal eshe massiv otdel'niy s classami, mojet bit' horoshei ideey takoi dlya platform sdelat', ctoby proshe stolknovenia perebirat'
+// Вообще я делал массив классов, чтобы перебирать их для регистрации, столкновений и т.д., здесь такой для платформ можно замутить.
