@@ -25,19 +25,19 @@ class gameObject: public DrawableObject
         vector2f Q; //здесь мои вектора собственные. Координаты и скорость
         vector2f V;
 
-        int xSize;
-        int ySize;
+        int xSize; // длина
+        int ySize; // ширина
 
-        bool isStrickingWithBorders = true;
+        bool isStrickingWithBorders = true; // видимо я предусмотрел что-то
 
         void setSize(int length, int width)
         {
             xSize = length;
             ySize = width;
-            shape.setSize(sf::Vector2f(xSize, ySize));
+            shape.setSize(sf::Vector2f(xSize, ySize)); // ВАЖНО! Здесь приходится использовать СФМЛьные вектора, принимает только их. просто форма записи.
         }
 
-        void setTexture(sf::Texture* newTexture)
+        void setTexture(sf::Texture* newTexture) // достаточно при создании объекта кинуть в него текстуру
         {
             shape.setTexture(newTexture);
         }
@@ -84,11 +84,14 @@ class gameObject: public DrawableObject
             this->V.y = this->V.y - resistanceCoef * this->V.y;
         }
 
-        void addSpeed(int horisontalSpeed, int vertivalSpeed)
+        void addSpeed(int horisontalSpeed, int vertivalSpeed) // для прибаления скорости при нажатии, можно и при отталкивании по х отрицательную добавлять
         {
             V.x += horisontalSpeed;
             V.y += vertivalSpeed;
         }
+	
+	// надо гравитацию
+	// надо столкновения
     
 } ;
 
@@ -98,7 +101,7 @@ main()
 {
     //CONTEXT:
     sf::Event event;
-
+// здесь идёт меню, чтобы одно окно только грузилось (вот и проблема для функции, что просто новое окно окно появляется и стопориться старое. Лучше сделать, чтобы просто в нашем игровом окне риосались другие объекты, по выходу снова рисовались старые) Вывод: два окна - не очень идея.
     sf::RenderWindow menuWindow(sf::VideoMode(1200, 800), "menu");
     sf::Texture menuTexture;
 
@@ -127,13 +130,14 @@ main()
             menuWindow.display();
         }
     }
-
+// конец менюшки 
+	
     sf::RenderWindow window(sf::VideoMode(SCREEN_X, SCREEN_Y), "game");
-    window.setVerticalSyncEnabled(true);
+    window.setVerticalSyncEnabled(true); // вот синхра и фпс
     window.setFramerateLimit(60);
 
     
-    sf::Texture playerTexture;
+    sf::Texture playerTexture; // процедура загрузки нужных текстур, возможно стоит сделать массив указателей на них?
     if (!playerTexture.loadFromFile("texture.png"))
     {
         std::cout << "Loading texture erorr" << "\n";
@@ -151,7 +155,7 @@ main()
     gameObject player;
     gameObject background;
 
-    player.setSize(50, 50);
+    player.setSize(50, 50); // можно фабрику запилить
     player.setTexture(&playerTexture);
     player.setPosition(300,400);
 
@@ -164,11 +168,11 @@ main()
     {
         //PHISICS: 
 
-        player.move(DT, SCREEN_Y, SCREEN_X);
+        player.move(DT, SCREEN_Y, SCREEN_X); // опять удобнее массив из платформ сделать и потом по ним бегать
         player.addResistance(RESISTANCE_COEF);
 
         //EVEN HANDLER
-        while (window.pollEvent(event))
+        while (window.pollEvent(event)) // у тебя это лучше сделано
 		{
 		    if (event.type == sf::Event::Closed) 
                   window.close();
@@ -192,7 +196,7 @@ main()
         //manager.drawAll(&window);
         window.clear();
         background.draw(&window);
-        player.draw(&window);
+        player.draw(&window); // ну тут пока без менеджера
         window.display();
     }
 }
