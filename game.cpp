@@ -22,7 +22,7 @@ class gameObject: public DrawableObject
 
         sf::Texture texture;
 
-        vector2f Q;
+        vector2f Q; //здесь мои вектора собственные. Координаты и скорость
         vector2f V;
 
         int xSize;
