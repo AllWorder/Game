@@ -9,8 +9,8 @@
 #include "vector.h" // own new lib with vectors and operations on them
 #include "GraphicsManeger.h"
 
-const int SCREEN_Y = 600;
-const int SCREEN_X = 900;
+const int SCREEN_Y = 720;
+const int SCREEN_X = 1280;
 const float DT = 0.05;
 const float RESISTANCE_COEF = 0.025;
 
@@ -22,22 +22,22 @@ class gameObject: public DrawableObject
 
         sf::Texture texture;
 
-        vector2f Q; //здесь мои вектора собственные. Координаты и скорость
+        vector2f Q;
         vector2f V;
 
-        int xSize; // длина
-        int ySize; // ширина
+        int xSize;
+        int ySize;
 
-        bool isStrickingWithBorders = true; // видимо я предусмотрел что-то
+        bool isStrickingWithBorders = true;
 
         void setSize(int length, int width)
         {
             xSize = length;
             ySize = width;
-            shape.setSize(sf::Vector2f(xSize, ySize)); // ВАЖНО! Здесь приходится использовать СФМЛьные вектора, принимает только их. просто форма записи.
+            shape.setSize(sf::Vector2f(xSize, ySize));
         }
 
-        void setTexture(sf::Texture* newTexture) // достаточно при создании объекта кинуть в него текстуру
+        void setTexture(sf::Texture* newTexture)
         {
             shape.setTexture(newTexture);
         }
@@ -84,60 +84,47 @@ class gameObject: public DrawableObject
             this->V.y = this->V.y - resistanceCoef * this->V.y;
         }
 
-        void addSpeed(int horisontalSpeed, int vertivalSpeed) // для прибаления скорости при нажатии, можно и при отталкивании по х отрицательную добавлять
+        void addSpeed(int horisontalSpeed, int vertivalSpeed)
         {
             V.x += horisontalSpeed;
             V.y += vertivalSpeed;
         }
-	
-	// надо гравитацию
-	// надо столкновения
     
 } ;
 
-
+#include "menu.hpp"
 
 main()
 {
+    Menu menu;
+
+    sf::Texture menuBackTexture;
+    sf::Texture button1Texture;
+    sf::Texture button2Texture;
+    sf::Texture button3Texture;
+    sf::Texture logoTexture;
+    menuBackTexture.loadFromFile("menuBackground.png");
+    button1Texture.loadFromFile("button1.png");
+    button2Texture.loadFromFile("button2.png");
+    button3Texture.loadFromFile("button3.png");
+    logoTexture.loadFromFile("logo.png");
+
+    menu.setTextures(&menuBackTexture, &button1Texture, &button2Texture, &button3Texture, &logoTexture);
+
+
+    
+    
+    
+    
     //CONTEXT:
     sf::Event event;
-// здесь идёт меню, чтобы одно окно только грузилось (вот и проблема для функции, что просто новое окно окно появляется и стопориться старое. Лучше сделать, чтобы просто в нашем игровом окне риосались другие объекты, по выходу снова рисовались старые) Вывод: два окна - не очень идея.
-    sf::RenderWindow menuWindow(sf::VideoMode(1200, 800), "menu");
-    sf::Texture menuTexture;
 
-    if (!menuTexture.loadFromFile("menu.png"))
-    {
-        std::cout << "Loading texture erorr" << "\n";
-    }
-
-    gameObject menu;
-    menu.setSize(1200, 800);
-    menu.setTexture(&menuTexture);
-    menu.setPosition(0,0);
-    menu.draw(&menuWindow);
-
-    while (menuWindow.isOpen())
-    {
-        while (menuWindow.pollEvent(event))
-		{
-		    if (event.type == sf::Event::Closed) 
-                    menuWindow.close();
-			if (event.type == sf::Event::KeyPressed)
-			{
-				if (event.key.code == sf::Keyboard::Space) // exit by escape
-                    menuWindow.close();
-            }
-            menuWindow.display();
-        }
-    }
-// конец менюшки 
-	
     sf::RenderWindow window(sf::VideoMode(SCREEN_X, SCREEN_Y), "game");
-    window.setVerticalSyncEnabled(true); // вот синхра и фпс
+    window.setVerticalSyncEnabled(true);
     window.setFramerateLimit(60);
 
     
-    sf::Texture playerTexture; // процедура загрузки нужных текстур, возможно стоит сделать массив указателей на них?
+    sf::Texture playerTexture;
     if (!playerTexture.loadFromFile("texture.png"))
     {
         std::cout << "Loading texture erorr" << "\n";
@@ -155,7 +142,7 @@ main()
     gameObject player;
     gameObject background;
 
-    player.setSize(50, 50); // можно фабрику запилить
+    player.setSize(50, 50);
     player.setTexture(&playerTexture);
     player.setPosition(300,400);
 
@@ -168,18 +155,19 @@ main()
     {
         //PHISICS: 
 
-        player.move(DT, SCREEN_Y, SCREEN_X); // опять удобнее массив из платформ сделать и потом по ним бегать
+        player.move(DT, SCREEN_Y, SCREEN_X);
         player.addResistance(RESISTANCE_COEF);
 
         //EVEN HANDLER
-        while (window.pollEvent(event)) // у тебя это лучше сделано
+        while (window.pollEvent(event))
 		{
 		    if (event.type == sf::Event::Closed) 
                   window.close();
 			if (event.type == sf::Event::KeyPressed)
 			{
 				if (event.key.code == sf::Keyboard::Escape) // exit by escape
-                    window.close();
+                    menu.run(&window);
+                    //window.close();
                 if (event.key.code == sf::Keyboard::Up)
                     player.addSpeed(0, -3);
                 if (event.key.code == sf::Keyboard::Down)
@@ -196,7 +184,7 @@ main()
         //manager.drawAll(&window);
         window.clear();
         background.draw(&window);
-        player.draw(&window); // ну тут пока без менеджера
+        player.draw(&window);
         window.display();
     }
 }
